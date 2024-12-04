@@ -19,6 +19,33 @@ const data = [
         const filteredData = data.filter(item => item.salario > parseFloat(salario));
         res.json(filteredData);});
         app.listen(port, () => {console.log(`Servidor OK`);});
+
+    app.get("/api/cpf/:cpf", async (req, res) => {
+        const { cpf } = req.params;
+        const apiUrl = `'https://api.portaldatransparencia.gov.br/pessoa-fisica?cpf=${cpf}`;
+        try {
+            const response = await fetch(apiUrl, {
+                method: "GET"
+            });
+            
+            if (!response.ok) {
+                return res.status(response.status).json({
+                    error: `Erro na API externa: ${response.statusText}`,
+                });
+            }
+            const data = await response.json();
+            return res.status(200).json(data);
+        } catch (error) {
+            console.error("Erro ao buscar dados:", error.message);
+            return res.status(500).json({error: "Erro interno do servidor" });
+        }
+    });
+
+    app.get('/items' , (req, res) => {
+        const {cpf } = req.query;
+
+        res.json(filteredData);
+    });
   
 
 
